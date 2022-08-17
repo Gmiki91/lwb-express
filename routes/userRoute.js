@@ -1,9 +1,9 @@
-import { Router } from 'express';
-import {
+const Router = require('express');
+const {
     createOrUpdate,
     getAll,
     getOne,
-    deleteOne} from '../db.js';
+    deleteOne} = require('../db.js');
 const router = Router();
 const TABLE_NAME = 'users';
 router.post('/signup', async(req,res)=>{
@@ -21,5 +21,4 @@ router.get('/all', async(req,res)=>{
   }
   return res.status(500).json({ success: false, message: 'Error Occured !!!'})
 });
-
-export default router;
+module.exports = router;
