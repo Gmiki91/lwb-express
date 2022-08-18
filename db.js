@@ -9,25 +9,24 @@ AWS.config.update({
 const dynamoClient = new AWS.DynamoDB.DocumentClient();
 
 // CREATE OR UPDATE USER
-exports.createOrUpdate = async (data = {}) => {
+exports.createOrUpdate = async (data) => {
   data.item.id = uuidv4();
   const params = {
     TableName: data.table,
     Item: data.item
   }
   try {
-    await dynamoClient.put(params).promise()
-    return { success: true }
+    const item = await dynamoClient.put(params).promise();
+    return { success: true, data:data.item }
   } catch (error) {
-    console.log(error)
     return { success: false }
   }
 }
 
 // READ ALL USERS
-exports.getAll = async () => {
+exports.getAll = async (data) => {
   const params = {
-    TableName: TABLE_NAME,
+    TableName: data.table,
   }
   try {
     const { Items = [] } = await dynamoClient.scan(params).promise()
@@ -38,11 +37,11 @@ exports.getAll = async () => {
 }
 
 // READ SINGLE USER ON KEY(id)
-exports.getOne = async (value, key = 'id') => {
+exports.getOne = async (data) => {
   const params = {
-    TableName: TABLE_NAME,
+    TableName: data.table,
     Key: {
-      [key]: value,
+      [data.key]: data.value,
     },
   }
   try {

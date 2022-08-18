@@ -5,17 +5,9 @@ const {
   getOne,
   deleteOne } = require('../db.js');
 const router = Router();
-const TABLE_NAME = 'users';
-router.post('/signup', async (req, res) => {
+const TABLE_NAME = 'students';
+router.post('/register', async (req, res) => {
   const { success, data } = await createOrUpdate({ item: req.body, table: TABLE_NAME })
-  if (success) {
-    return res.json({ success, data })
-  }
-  return res.status(500).json({ success: false, message: 'Error Occured !!!' })
-});
-
-router.post('/login', async (req, res) => {
-  const { success, data } = await getOne({ value: req.body.email, key: "email", table: TABLE_NAME })
   if (success) {
     return res.json({ success, data })
   }
