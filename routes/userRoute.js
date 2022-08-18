@@ -16,8 +16,11 @@ router.post('/signup', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const { success, data } = await getOne({ value: req.body.email, key: "email", table: TABLE_NAME })
-  if (success) {
-    return res.json({ success, data })
+  if (success && data) {
+    if(data.password === req.body.password){
+      return res.json({ success, data })
+    }
+    return res.status(403).json({ success: false, message: 'Wrong email or password' })
   }
   return res.status(500).json({ success: false, message: 'Error Occured !!!' })
 });

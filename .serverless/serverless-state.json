@@ -174,7 +174,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/lwb-express/dev/1660769476533-2022-08-17T20:51:16.533Z/lwb-express.zip"
+                "S3Key": "serverless/lwb-express/dev/1660822564679-2022-08-18T11:36:04.679Z/lwb-express.zip"
               },
               "Handler": "app/app.handler",
               "Runtime": "nodejs14.x",
@@ -192,14 +192,14 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersionWofIRQwE0UdUntuKdwljmVPJ4NC7k4OQdbLjb1CKr8E": {
+          "AppLambdaVersionuQm5J466VYimeFGwofCNMqU4i2OIWICWFcGQbiLc8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "vyNHSlpcspqctON3ZXaFUmPez3trZCWsz4SdX1EWS3k="
+              "CodeSha256": "zENBjvyW4ILtYjuDas0cN09pRgt+jvyY3MFaKM6+zNs="
             }
           },
           "ApiGatewayRestApi": {
@@ -417,7 +417,7 @@
               "AppLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1660769471306": {
+          "ApiGatewayDeployment1660822553970": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -482,7 +482,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersionWofIRQwE0UdUntuKdwljmVPJ4NC7k4OQdbLjb1CKr8E"
+              "Ref": "AppLambdaVersionuQm5J466VYimeFGwofCNMqU4i2OIWICWFcGQbiLc8"
             },
             "Export": {
               "Name": "sls-lwb-express-dev-AppLambdaFunctionQualifiedArn"
@@ -660,7 +660,7 @@
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "AppLambdaVersionWofIRQwE0UdUntuKdwljmVPJ4NC7k4OQdbLjb1CKr8E"
+        "versionLogicalId": "AppLambdaVersionuQm5J466VYimeFGwofCNMqU4i2OIWICWFcGQbiLc8"
       }
     },
     "configValidationMode": "warn",
@@ -679,7 +679,7 @@
     "artifact": "D:\\Edu\\Workspace\\LWB\\lwb-express\\.serverless\\lwb-express.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/lwb-express/dev/1660769476533-2022-08-17T20:51:16.533Z",
+    "artifactDirectoryName": "serverless/lwb-express/dev/1660822564679-2022-08-18T11:36:04.679Z",
     "artifact": "lwb-express.zip"
   }
 }
