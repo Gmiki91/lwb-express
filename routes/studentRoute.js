@@ -1,24 +1,18 @@
 const Router = require('express');
-const {
-  createOrUpdate,
-  getAll,
-  getOne,
-  deleteOne } = require('../db.js');
 const router = Router();
-const TABLE_NAME = 'students';
-router.post('/register', async (req, res) => {
-  const { success, data } = await createOrUpdate({ item: req.body, table: TABLE_NAME })
-  if (success) {
-    return res.json({ success, data })
-  }
-  return res.status(500).json({ success: false, message: 'Error Occured !!!' })
-});
+const authCheck = require('../middleware/authCheck');
+const studentController = require('../controllers/studentController');
 
-router.get('/all', async (req, res) => {
-  const { success, data } = await getAll({table:TABLE_NAME})
-  if (success) {
-    return res.json({ success, data })
-  }
-  return res.status(500).json({ success: false, message: 'Error Occured !!!' })
-});
+router.route('/')
+    .get(studentController.getAll)
+    .post(authCheck, studentController.register);
+
+router.route('/results')
+    .post(studentController.getResults)
+    .put(studentController.giveResult)
+    .patch(studentController.updateResult)
+
+router.route('/children')
+    .get(authCheck, studentController.getChildren);
+
 module.exports = router;

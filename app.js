@@ -1,5 +1,6 @@
 const serverless = require('serverless-http');
 const express = require('express');
+const mongoose = require('mongoose');   
 const cors = require('cors');
 const userRoute = require('./routes/userRoute.js');
 const studentRoute = require('./routes/studentRoute.js');
@@ -19,4 +20,12 @@ app.use('/api/students', studentRoute);
 // app.listen(3000,()=>{
 //     console.log('Express server listening on port 3000');
 // });
+
+mongoose.connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PW}4@cluster0.hakyf.mongodb.net/lwb?retryWrites=true&w=majority`,
+    { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log("Connected to database!");
+    });
+
 module.exports.handler = serverless(app);

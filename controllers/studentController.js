@@ -1,0 +1,109 @@
+const Student = require('../models/student');
+const ObjectId = require('mongodb').ObjectId;
+exports.register = async (req, res) => {
+    const { fullNameC, fullNameL, dob, currentGrade, healthIssues, vegetarian, ukraineSchool, registeredAt, user } = req.body
+    const student = await Student.create({
+        fullNameC: fullNameC,
+        fullNameL: fullNameL,
+        dob: dob,
+        currentGrade: currentGrade,
+        healthIssues: healthIssues,
+        vegetarian: vegetarian,
+        ukraineSchool: ukraineSchool,
+        registeredAt: registeredAt,
+        gradeBook: initGradeBooks(currentGrade)
+    });
+    user.childrenIds.push(student._id);
+    user.save();
+    res.status(200).json({
+        status: 'success',
+        student
+    })
+};
+exports.getAll = async (req, res) => {
+    const students = await Student.find()
+    res.status(200).json({
+        status: 'success',
+        students
+    })
+}
+exports.getChildren = async (req, res) => {
+    const { childrenIds } = req.body.user.toObject();
+    const students = await Student.find({ _id: { $in: childrenIds } })
+    res.status(200).json({
+        status: 'success',
+        students
+    })
+}
+
+exports.getResults = async (req, res) => {
+    let students = await Student.find({ currentGrade: { $in: req.body.grade } });
+    students = students
+        .map(student => {
+            return {
+                _id: student._id,
+                fullNameC: student.fullNameC,
+                results: student.gradeBook.find(book => book.subject === req.body.subject)?.results
+            }
+        })
+    res.status(200).json({
+        status: 'success',
+        data: students
+    })
+}
+
+exports.giveResult = async (req, res) => {
+    const { studentId, result, grade, subject } = req.body;
+    const student = await Student.findById(studentId);
+    student.gradeBook
+        .find(book => (book.subject === subject && grade.includes(book.grade)))
+        .results.push(result);
+    student.save();
+    res.status(201).json({
+        status: 'success',
+    })
+}
+exports.updateResult = async (req, res) => {
+    const { studentId, result, grade, subject } = req.body;
+    const student = await Student.findById(studentId);
+    student.gradeBook
+        .find(book => (book.subject === subject && grade.includes(book.grade)))
+        .results.find(resultObj => ObjectId(result._id).equals(resultObj._id)).set(result)
+
+    await student.save();
+    res.status(201).json({
+        status: 'success',
+    })
+}
+
+const initGradeBooks = (grade) => {
+    const subjects = getSubjectsByGrade(grade);
+    const books = subjects.map(subject => {
+        return {
+            grade: grade,
+            subject: subject,
+            results: []
+        }
+    });
+    return books;
+}
+const getSubjectsByGrade = (grade) => {
+    switch (grade) {
+        case 1:
+        case 2:
+            return ["Biology", "Math"];
+        case 3:
+        case 4:
+            return ["English", "Math"];
+        case 5:
+        case 6:
+            return ["History", "Literature"];
+        case 7:
+        case 8:
+            return ["English", "Math", "Biology"];
+        case 9:
+        case 10:
+        case 11:
+            return ["Chemistry"];
+    }
+}
