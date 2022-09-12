@@ -5,7 +5,7 @@ const cors = require('cors');
 const userRoute = require('./routes/userRoute.js');
 const studentRoute = require('./routes/studentRoute.js');
 const app = express();
-
+require('dotenv').config();
 //bodyparser
 app.use(express.json());
 
@@ -13,7 +13,7 @@ const corsOptions = {
     origin: ['http://localhost:4200', 'https://master.dc6hua597n5ox.amplifyapp.com'],
     optionsSuccessStatus: 200 // For legacy browser support
 }
-app.use(cors(corsOptions));
+app.use(cors());
 app.use('/api/users', userRoute);
 app.use('/api/students', studentRoute);
 
@@ -22,7 +22,7 @@ app.use('/api/students', studentRoute);
 // });
 
 mongoose.connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PW}4@cluster0.hakyf.mongodb.net/lwb?retryWrites=true&w=majority`,
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PW}@cluster0.hakyf.mongodb.net/lwb?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log("Connected to database!");

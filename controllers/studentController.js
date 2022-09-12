@@ -20,14 +20,16 @@ exports.register = async (req, res) => {
         student
     })
 };
-exports.getAll = async (req, res) => {
-    const students = await Student.find()
+exports.getMany = async (req, res) => {
+    let classes = req.params.classes.split(',');
+    classes = classes.map(grade=>+grade);
+    const students = await Student.find({ currentGrade:{$in:classes}})
     res.status(200).json({
         status: 'success',
         students
     })
 }
-exports.getChildren = async (req, res) => {
+exports.getChildren = async (req, res) =>{
     const { childrenIds } = req.body.user.toObject();
     const students = await Student.find({ _id: { $in: childrenIds } })
     res.status(200).json({
