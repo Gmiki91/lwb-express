@@ -1,7 +1,7 @@
 const Student = require('../models/student');
 const ObjectId = require('mongodb').ObjectId;
 exports.register = async (req, res) => {
-    const { fullNameC, fullNameL, dob, currentGrade, healthIssues, vegetarian, ukraineSchool, registeredAt, user } = req.body
+    const { fullNameC, fullNameL, dob, currentGrade, healthIssues, vegetarian, ukraineSchool, registeredAt, user } = req.body;
     const student = await Student.create({
         fullNameC: fullNameC,
         fullNameL: fullNameL,

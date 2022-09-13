@@ -1,19 +1,22 @@
+// require('dotenv').config();
 const serverless = require('serverless-http');
 const express = require('express');
 const mongoose = require('mongoose');   
-const cors = require('cors');
 const userRoute = require('./routes/userRoute.js');
 const studentRoute = require('./routes/studentRoute.js');
 const app = express();
-require('dotenv').config();
-//bodyparser
-app.use(express.json());
 
-const corsOptions = {
-    origin: ['http://localhost:4200', 'https://master.dc6hua597n5ox.amplifyapp.com'],
-    optionsSuccessStatus: 200 // For legacy browser support
-}
-app.use(cors());
+app.use(express.json({ limit: '50kb' }));
+app.use((req,res,next)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers",
+     "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", 
+    "GET, POST, PATCH, PUT, DELETE, OPTIONS");
+    res.header("Cache-Control", "no-cache");
+    next();
+});
+
 app.use('/api/users', userRoute);
 app.use('/api/students', studentRoute);
 
@@ -28,4 +31,4 @@ mongoose.connect(
         console.log("Connected to database!");
     });
 
-module.exports.handler = serverless(app);
+    module.exports.handler = serverless(app);

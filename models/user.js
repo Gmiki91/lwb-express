@@ -10,18 +10,34 @@ const User = mongoose.Schema({
     email: String,
     phone: String,
     address: String,
-    childrenIds:[String]
+    childrenIds: [String]
 }, { collection: 'users' });
 
-User.pre('save', async function (next) {
-    // Only run this function if password was actually modified
-    if (!this.isModified('password')) return next();
-    // Hash the password with cost of 12
-    this.password = await bcrypt.hash(this.password, 12);
-    next();
+User.pre('save', function (next) {
+    var user = this;
+
+    // only hash the password if it has been modified (or is new)
+    if (!user.isModified('password')) return next();
+
+    // generate a salt
+    bcrypt.genSalt(10, function (err, salt) {
+        if (err) return next(err);
+
+        // hash the password using our new salt
+        bcrypt.hash(user.password, salt, function (err, hash) {
+            if (err) return next(err);
+
+            // override the cleartext password with the hashed one
+            user.password = hash;
+            next();
+        });
+    });
 });
 
-User.methods.correctPassword = async function (candidatePw, userPw) {
-    return await bcrypt.compare(candidatePw, userPw)
-}
+User.methods.comparePassword = function (candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
+        if (err) return cb(err);
+        cb(null, isMatch);
+    });
+};
 module.exports = mongoose.model('User', User);
