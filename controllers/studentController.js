@@ -22,14 +22,14 @@ exports.register = async (req, res) => {
 };
 exports.getMany = async (req, res) => {
     let classes = req.params.classes.split(',');
-    classes = classes.map(grade=>+grade);
-    const students = await Student.find({ currentGrade:{$in:classes}})
+    classes = classes.map(grade => +grade);
+    const students = await Student.find({ currentGrade: { $in: classes } })
     res.status(200).json({
         status: 'success',
         students
     })
 }
-exports.getChildren = async (req, res) =>{
+exports.getChildren = async (req, res) => {
     const { childrenIds } = req.body.user.toObject();
     const students = await Student.find({ _id: { $in: childrenIds } })
     res.status(200).json({
@@ -55,21 +55,32 @@ exports.getResults = async (req, res) => {
 }
 
 exports.giveResult = async (req, res) => {
-    const { studentId, result, grade, subject } = req.body;
-    const student = await Student.findById(studentId);
-    student.gradeBook
-        .find(book => (book.subject === subject && grade.includes(book.grade)))
-        .results.push(result);
-    student.save();
+    const { studentMarks, result, grade, subject } = req.body;
+    const ids = studentMarks.map(studentMark => studentMark.id);
+    const students = await Student.find({ _id: { $in: ids } });
+    students.forEach(student => {
+        student.gradeBook
+            .find(book => (book.subject === subject && grade == book.grade))
+            .results.push(addMarkAndResult(student._id, studentMarks, result))
+        student.save();
+    });
     res.status(201).json({
         status: 'success',
     })
+}
+const addMarkAndResult = (id, studentMarks, result) => {
+    studentMarks.forEach(studentMark => {
+        if (ObjectId(studentMark.id).equals(id)) {
+            result.mark = studentMark.mark;
+        }
+    });
+    return result;
 }
 exports.updateResult = async (req, res) => {
     const { studentId, result, grade, subject } = req.body;
     const student = await Student.findById(studentId);
     student.gradeBook
-        .find(book => (book.subject === subject && grade.includes(book.grade)))
+        .find(book => book.subject === subject && grade == book.grade)
         .results.find(resultObj => ObjectId(result._id).equals(resultObj._id)).set(result)
 
     await student.save();
