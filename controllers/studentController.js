@@ -3,6 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 exports.register = async (req, res) => {
     const { fullNameC, fullNameL, dob, currentGrade, healthIssues, vegetarian, ukraineSchool, registeredAt, user } = req.body;
     const student = await Student.create({
+        _id:new ObjectId(),
         fullNameC: fullNameC,
         fullNameL: fullNameL,
         dob: dob,
@@ -11,7 +12,9 @@ exports.register = async (req, res) => {
         vegetarian: vegetarian,
         ukraineSchool: ukraineSchool,
         registeredAt: registeredAt,
-        gradeBook: initGradeBooks(currentGrade)
+        gradeBook: initGradeBooks(currentGrade),
+        missedClassAt: []
+
     });
     user.childrenIds.push(student._id);
     user.save();
@@ -35,6 +38,18 @@ exports.getChildren = async (req, res) => {
     res.status(200).json({
         status: 'success',
         students
+    })
+}
+
+
+exports.updateStudents = async (req, res) => {
+    const { students } = req.body;
+    const studentPresence = students.map(student =>{return {id:student._id, presence:student.missedClassAt}});
+    studentPresence.forEach(async el=>{
+        await Student.updateOne({_id:el.id},{missedClassAt:el.presence})
+    });
+    res.status(200).json({
+        status: 'success'
     })
 }
 

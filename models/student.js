@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const GradeBook = require('./gradeBook');
 const Student = mongoose.Schema({
+    _id:String,
     fullNameC: String,
     fullNameL: String,
     dob: Date,
@@ -10,7 +11,8 @@ const Student = mongoose.Schema({
     vegetarian: Boolean,
     registeredAt: Number,
     notes: Number,
-    gradeBook: [GradeBook]
+    gradeBook: [GradeBook],
+    missedClassAt:[Number]
 }
     , { collection: 'students' });
     

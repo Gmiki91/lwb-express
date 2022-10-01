@@ -5,8 +5,9 @@ const studentController = require('../controllers/studentController');
 
 router.route('/')
     .post(authCheck, studentController.register)
-    .get(authCheck, studentController.getChildren);
-
+    .get(authCheck, studentController.getChildren)
+    .put(authCheck, studentController.updateStudents);
+    
 router.route('/:classes')
     .get(studentController.getMany);
 
