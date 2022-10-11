@@ -18,13 +18,12 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = async (req, res, next) => {
-    const { fullName, password, email, phone, address } = req.body;
+    const { fullName, password, email, type } = req.body;
     const user = await User.create({
         fullName: fullName,
         email: email,
         password: password,
-        phone: phone,
-        address: address,
+        type:type,
         childrenIds: []
     });
     createSendToken(user, 201, res);
@@ -34,7 +33,7 @@ exports.login = async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email }).select('+password')
     user.comparePassword(password, function (err, isMatch) {
-        if (err) throw err;
+        if (err) return res.status(401).json({message:"Wrong email or password"});
         if (isMatch) createSendToken(user, 200, res);
     });
 }

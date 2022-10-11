@@ -8,9 +8,8 @@ const User = mongoose.Schema({
         select: false
     },
     email: String,
-    phone: String,
-    address: String,
-    childrenIds: [String]
+    childrenIds: [String],
+    type:String
 }, { collection: 'users' });
 
 User.pre('save', function (next) {

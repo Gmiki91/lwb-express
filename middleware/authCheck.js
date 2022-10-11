@@ -8,7 +8,7 @@ module.exports = async(req, res, next)=> {
     }
 
     if(!token){
-       console.log('You must be logged in to get access!', 401);
+       return res.status(401).json({message:'You must be logged in to get access!'});
     }
 
     const decoded = jwt.verify(token,process.env.JWT_SECRET);
@@ -16,6 +16,7 @@ module.exports = async(req, res, next)=> {
     const user = await User.findById(decoded.id);
     if(!user){
         console.log('User does not exists!', 401);
+        return res.status(401).json({message:'User does not exists'});
     }
     
     req.body.user = user;

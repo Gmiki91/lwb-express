@@ -12,7 +12,8 @@ const Student = mongoose.Schema({
     registeredAt: Number,
     notes: Number,
     gradeBook: [GradeBook],
-    missedClassAt:[Number]
+    missedClassAt:[Number],
+    foodOrderedFor:[Date],
 }
     , { collection: 'students' });
     

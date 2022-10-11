@@ -13,7 +13,8 @@ exports.register = async (req, res) => {
         ukraineSchool: ukraineSchool,
         registeredAt: registeredAt,
         gradeBook: initGradeBooks(currentGrade),
-        missedClassAt: []
+        missedClassAt: [],
+        foodOrderedFor: [],
 
     });
     user.childrenIds.push(student._id);
@@ -32,6 +33,7 @@ exports.getMany = async (req, res) => {
         students
     })
 }
+
 exports.getChildren = async (req, res) => {
     const { childrenIds } = req.body.user.toObject();
     const students = await Student.find({ _id: { $in: childrenIds } })
@@ -41,13 +43,20 @@ exports.getChildren = async (req, res) => {
     })
 }
 
-
 exports.updateStudents = async (req, res) => {
     const { students } = req.body;
     const studentPresence = students.map(student =>{return {id:student._id, presence:student.missedClassAt}});
     studentPresence.forEach(async el=>{
         await Student.updateOne({_id:el.id},{missedClassAt:el.presence})
     });
+    res.status(200).json({
+        status: 'success'
+    })
+}
+
+exports.updateFoodOrder = async (req, res) => {
+    const { student } = req.body;
+    await Student.findByIdAndUpdate(student._id,{foodOrderedFor:student.foodOrderedFor})
     res.status(200).json({
         status: 'success'
     })
