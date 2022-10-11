@@ -53,6 +53,9 @@ exports.updateStudents = async (req, res) => {
         status: 'success'
     })
 }
+exports.getAllFoodOrder=async(req, res)=>{
+    const students = await Student.findAll();
+}
 
 exports.updateFoodOrder = async (req, res) => {
     const { student } = req.body;
