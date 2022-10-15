@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 exports.register = async (req, res) => {
     const { fullNameC, fullNameL, dob, currentGrade, healthIssues, vegetarian, ukraineSchool, registeredAt, user } = req.body;
     const student = await Student.create({
-        _id:new ObjectId(),
+        _id: new ObjectId(),
         fullNameC: fullNameC,
         fullNameL: fullNameL,
         dob: dob,
@@ -45,21 +45,21 @@ exports.getChildren = async (req, res) => {
 
 exports.updateStudents = async (req, res) => {
     const { students } = req.body;
-    const studentPresence = students.map(student =>{return {id:student._id, presence:student.missedClassAt}});
-    studentPresence.forEach(async el=>{
-        await Student.updateOne({_id:el.id},{missedClassAt:el.presence})
+    const studentPresence = students.map(student => { return { id: student._id, presence: student.missedClassAt } });
+    studentPresence.forEach(async el => {
+        await Student.updateOne({ _id: el.id }, { missedClassAt: el.presence })
     });
     res.status(200).json({
         status: 'success'
     })
 }
-exports.getAllFoodOrder=async(req, res)=>{
+exports.getAllFoodOrder = async (req, res) => {
     const students = await Student.findAll();
 }
 
 exports.updateFoodOrder = async (req, res) => {
     const { student } = req.body;
-    await Student.findByIdAndUpdate(student._id,{foodOrderedFor:student.foodOrderedFor})
+    await Student.findByIdAndUpdate(student._id, { foodOrderedFor: student.foodOrderedFor })
     res.status(200).json({
         status: 'success'
     })
@@ -85,16 +85,18 @@ exports.giveResult = async (req, res) => {
     const { studentMarks, result, grade, subject } = req.body;
     const ids = studentMarks.map(studentMark => studentMark.id);
     const students = await Student.find({ _id: { $in: ids } });
+    const promises = [];
     students.forEach(student => {
         student.gradeBook
             .find(book => (book.subject === subject && grade == book.grade))
             .results.push(addMarkAndResult(student._id, studentMarks, result))
-        student.save();
+        promises.push(student.save());
     });
-    res.status(201).json({
-        status: 'success',
-    })
+    Promise.all(promises).then(() =>
+        res.status(201).json({ status: 'success' })
+    );
 }
+
 const addMarkAndResult = (id, studentMarks, result) => {
     studentMarks.forEach(studentMark => {
         if (ObjectId(studentMark.id).equals(id)) {
@@ -103,6 +105,7 @@ const addMarkAndResult = (id, studentMarks, result) => {
     });
     return result;
 }
+
 exports.updateResult = async (req, res) => {
     const { studentId, result, grade, subject } = req.body;
     const student = await Student.findById(studentId);
