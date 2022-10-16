@@ -54,7 +54,30 @@ exports.updateStudents = async (req, res) => {
     })
 }
 exports.getAllFoodOrder = async (req, res) => {
-    const students = await Student.findAll();
+    const students = await Student.find();
+    data = students.filter(student => student.foodOrderedFor.length > 0);
+
+    const groups = data.reduce((groups, student) => {
+        student.foodOrderedFor.forEach(order => {
+            if (order > Date.now()) {
+                const date = new Date(order);
+                date.setHours(0, 0, 0, 0);
+                if (!groups[date]) groups[date] = 0;
+                const value = student.vegetarian ? 0.01 : 1;
+                groups[date] += value;
+            }
+        })
+        return groups;
+    }, {});
+    const result = Object.keys(groups).map((date) => {
+        return { date, count: groups[date] };
+    });
+    result.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    res.status(200).json({
+        status: 'success',
+        result
+    })
+
 }
 
 exports.updateFoodOrder = async (req, res) => {
@@ -134,19 +157,19 @@ const getSubjectsByGrade = (grade) => {
     switch (grade) {
         case 1:
         case 2:
-            return ["Biology", "Math"];
+            return ["biology", "math"];
         case 3:
         case 4:
-            return ["English", "Math"];
+            return ["english", "math"];
         case 5:
         case 6:
-            return ["History", "Literature"];
+            return ["history", "literature"];
         case 7:
         case 8:
-            return ["English", "Math", "Biology"];
+            return ["english", "math", "biology"];
         case 9:
         case 10:
         case 11:
-            return ["Chemistry"];
+            return ["chemistry"];
     }
 }

@@ -16,6 +16,7 @@ router.route('/:classes')
 router.route('/food')
 .put(authCheck,parentCheck,studentController.updateFoodOrder)
 
+router.route('/food/all').get(studentController.getAllFoodOrder)
 router.route('/results')
     .post(studentController.getResults)
     .put(authCheck, teacherCheck,studentController.giveResult)
