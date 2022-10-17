@@ -154,22 +154,7 @@ const initGradeBooks = (grade) => {
     return books;
 }
 const getSubjectsByGrade = (grade) => {
-    switch (grade) {
-        case 1:
-        case 2:
-            return ["biology", "math"];
-        case 3:
-        case 4:
-            return ["english", "math"];
-        case 5:
-        case 6:
-            return ["history", "literature"];
-        case 7:
-        case 8:
-            return ["english", "math", "biology"];
-        case 9:
-        case 10:
-        case 11:
-            return ["chemistry"];
-    }
+    return grade < 5 ? ["ukrainian_language", "english_language", "mathematics", "literary_reading", "informatics", "explore", "art", "music", "p_e", "hungarian_language"]
+        : ["ukrainian_language", "ukrainian_literature", "english_language", "world_literature", "mathematics", "algebra", "geometry", "ukrainian_history", "world_history",
+            "law", "geography", "biology", "physics", "chemistry", "p_e", "hungarian_language"]
 }
