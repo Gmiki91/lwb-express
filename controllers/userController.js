@@ -13,7 +13,7 @@ const createSendToken = (user, statusCode, res) => {
     res.status(statusCode).json({
         status: 'success',
         token,
-        type:user.type
+        type: user.type
     });
 };
 
@@ -22,7 +22,7 @@ exports.signup = async (req, res, next) => {
     const user = await User.create({
         email: email,
         password: password,
-        type:type,
+        type: type,
         childrenIds: []
     });
     createSendToken(user, 201, res);
@@ -30,9 +30,8 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
-    const user = await User.findOne({ email: email }).select('+password')
-    user.comparePassword(password, function (err, isMatch) {
-        if (err) return res.status(401).json({message:"Wrong email or password"});
-        if (isMatch) createSendToken(user, 200, res);
-    });
+    const user = await User.findOne({ email: email }).select('+password');
+    if (!user || !(await user.comparePassword(password, user.password)))
+        return res.status(401).json({ status: "error", message: "Wrong email or password" });
+    createSendToken(user, 200, res);
 }
