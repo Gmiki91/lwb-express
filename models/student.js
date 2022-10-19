@@ -9,6 +9,7 @@ const Student = mongoose.Schema({
     ukraineSchool: String,
     healthIssues: [String],
     vegetarian: Boolean,
+    archived: Boolean,
     registeredAt: Number,
     notes: Number,
     gradeBook: [GradeBook],

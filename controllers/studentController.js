@@ -1,7 +1,7 @@
 const Student = require('../models/student');
 const ObjectId = require('mongodb').ObjectId;
 exports.register = async (req, res) => {
-    const { fullNameC, fullNameL, dob, currentGrade, healthIssues, vegetarian, ukraineSchool, registeredAt, user } = req.body;
+    const { fullNameC, fullNameL, dob, currentGrade, healthIssues, vegetarian, ukraineSchool, registeredAt, archived, user } = req.body;
     const student = await Student.create({
         _id: new ObjectId(),
         fullNameC: fullNameC,
@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
         gradeBook: initGradeBooks(currentGrade),
         missedClassAt: [],
         foodOrderedFor: [],
-
+        archived: archived
     });
     user.childrenIds.push(student._id);
     user.save();
@@ -53,8 +53,15 @@ exports.updateStudents = async (req, res) => {
         status: 'success'
     })
 }
+exports.updateStudentStatus = async (req, res) => {
+    const { student } = req.body;
+    await Student.findByIdAndUpdate(student._id, { archived: !student.archived })
+    res.status(200).json({
+        status: 'success'
+    })
+}
 exports.getAllFoodOrder = async (req, res) => {
-    const students = await Student.find();
+    const students = await Student.find({ archived: false });
     data = students.filter(student => student.foodOrderedFor.length > 0);
 
     const groups = data.reduce((groups, student) => {
@@ -89,12 +96,13 @@ exports.updateFoodOrder = async (req, res) => {
 }
 
 exports.getResults = async (req, res) => {
-    let students = await Student.find({ currentGrade: { $in: req.body.grade } });
+    let students = await Student.find({ currentGrade: { $in: req.body.grade }, archived: false });
     students = students
         .map(student => {
             return {
                 _id: student._id,
                 fullNameC: student.fullNameC,
+                fullNameL: student.fullNameL,
                 results: student.gradeBook.find(book => book.subject === req.body.subject)?.results
             }
         })
@@ -124,6 +132,7 @@ const addMarkAndResult = (id, studentMarks, result) => {
     studentMarks.forEach(studentMark => {
         if (ObjectId(studentMark.id).equals(id)) {
             result.mark = studentMark.mark;
+            result.textAssesment = studentMark.textAssesment;
         }
     });
     return result;
@@ -136,6 +145,17 @@ exports.updateResult = async (req, res) => {
         .find(book => book.subject === subject && grade == book.grade)
         .results.find(resultObj => ObjectId(result._id).equals(resultObj._id)).set(result)
 
+    await student.save();
+    res.status(201).json({
+        status: 'success',
+    })
+}
+
+exports.deleteResult = async (req, res) => {
+    const { studentId, result, grade, subject } = req.body;
+    const student = await Student.findById(studentId);
+    let gradeBook = student.gradeBook.find(book => book.subject === subject && grade == book.grade);
+    gradeBook.results = gradeBook.results.filter(resultObj =>!ObjectId(result._id).equals(resultObj._id));
     await student.save();
     res.status(201).json({
         status: 'success',
