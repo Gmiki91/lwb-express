@@ -117,7 +117,8 @@ exports.getResults = async (req, res) => {
 }
 
 exports.giveResult = async (req, res) => {
-    const { studentMarks, result, grade, subject } = req.body;
+    const { studentMarks, result, grade, subject, user } = req.body;
+    result.updatedBy = user.email;
     const ids = studentMarks.map(studentMark => studentMark.id);
     const students = await Student.find({ _id: { $in: ids } });
     const promises = [];
@@ -143,7 +144,8 @@ const addMarkAndResult = (id, studentMarks, result) => {
 }
 
 exports.updateResult = async (req, res) => {
-    const { studentId, result, grade, subject } = req.body;
+    const { studentId, result, grade, subject, user } = req.body;
+    result.updatedBy = user.email;
     const student = await Student.findById(studentId);
     student.gradeBook
         .find(book => book.subject === subject && grade == book.grade)

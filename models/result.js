@@ -4,6 +4,7 @@ const Result = mongoose.Schema({
     mark: Number,
     note: String,
     textAssesment:String,
-    type: 'Irásbeli' | 'szóbeli'
+    type: 'Irásbeli' | 'szóbeli',
+    updatedBy:String
 })
 module.exports = Result;
