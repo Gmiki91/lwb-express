@@ -5,6 +5,10 @@ const Result = mongoose.Schema({
     note: String,
     textAssesment:String,
     type: 'Irásbeli' | 'szóbeli',
-    updatedBy:String
+    updatedBy:String,
+    deleted:{
+        type:Boolean,
+        default: false
+    }
 })
 module.exports = Result;

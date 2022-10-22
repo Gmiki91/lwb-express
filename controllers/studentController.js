@@ -157,17 +157,6 @@ exports.updateResult = async (req, res) => {
     })
 }
 
-exports.deleteResult = async (req, res) => {
-    const { studentId, result, grade, subject } = req.body;
-    const student = await Student.findById(studentId);
-    let gradeBook = student.gradeBook.find(book => book.subject === subject && grade == book.grade);
-    gradeBook.results = gradeBook.results.filter(resultObj => !ObjectId(result._id).equals(resultObj._id));
-    await student.save();
-    res.status(201).json({
-        status: 'success',
-    })
-}
-
 const initGradeBooks = (grade) => {
     const subjects = getSubjectsByGrade(grade);
     const books = subjects.map(subject => {
