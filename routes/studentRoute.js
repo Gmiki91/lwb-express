@@ -12,14 +12,14 @@ router.route('/')
     .patch(authCheck, studentController.updateStudentStatus);
 
 router.route('/many/:classes')
-    .get(studentController.getMany);
+    .get(authCheck, teacherCheck, studentController.getMany);
 
 router.route('/food')
     .put(authCheck, parentCheck, studentController.updateFoodOrder)
     .get(studentController.getAllFoodOrder);
 
 router.route('/results')
-    .post(studentController.getResults)
+    .post(authCheck, teacherCheck,studentController.getResults)
     .put(authCheck, teacherCheck, studentController.giveResult)
     .patch(authCheck, teacherCheck, studentController.updateResult)
     .delete(authCheck, teacherCheck, studentController.deleteResult);

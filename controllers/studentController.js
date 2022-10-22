@@ -54,11 +54,15 @@ exports.updateStudents = async (req, res) => {
     })
 }
 exports.updateStudentStatus = async (req, res) => {
-    const { student } = req.body;
-    await Student.findByIdAndUpdate(student._id, { archived: !student.archived })
-    res.status(200).json({
-        status: 'success'
-    })
+    const { student, user } = req.body;
+    if (user.type === '1' || user.childrenIds.indexOf(student._id) > -1) {
+        await Student.findByIdAndUpdate(student._id, { archived: !student.archived })
+        res.status(200).json({
+            status: 'success'
+        })
+    }else{
+        return res.status(401).json({ message: 'Not authorized' });
+    }
 }
 exports.getAllFoodOrder = async (req, res) => {
     const students = await Student.find({ archived: false });
@@ -155,7 +159,7 @@ exports.deleteResult = async (req, res) => {
     const { studentId, result, grade, subject } = req.body;
     const student = await Student.findById(studentId);
     let gradeBook = student.gradeBook.find(book => book.subject === subject && grade == book.grade);
-    gradeBook.results = gradeBook.results.filter(resultObj =>!ObjectId(result._id).equals(resultObj._id));
+    gradeBook.results = gradeBook.results.filter(resultObj => !ObjectId(result._id).equals(resultObj._id));
     await student.save();
     res.status(201).json({
         status: 'success',
