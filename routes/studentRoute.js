@@ -7,7 +7,7 @@ const studentController = require('../controllers/studentController');
 
 router.route('/')
     .post(authCheck, studentController.register)
-    .get(authCheck, studentController.getChildren)
+    .get(parentCheck,studentController.getChildren)
     .put(authCheck, teacherCheck, studentController.updateStudents)
     .patch(authCheck, studentController.updateStudentStatus);
 
@@ -15,7 +15,7 @@ router.route('/many/:classes')
     .get(authCheck, teacherCheck, studentController.getMany);
 
 router.route('/food')
-    .put(authCheck, parentCheck, studentController.updateFoodOrder)
+    .put(parentCheck, studentController.updateFoodOrder)
     .get(studentController.getAllFoodOrder);
 
 router.route('/results')

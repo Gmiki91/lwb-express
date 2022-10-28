@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Student = require('../models/student');
 const jwt = require('jsonwebtoken');
 const signToken = id => jwt.sign(
     { id },
@@ -13,7 +14,7 @@ const createSendToken = (user, statusCode, res) => {
     res.status(statusCode).json({
         status: 'success',
         token,
-        type: user.type
+        type: user.type ? user.type : '0'
     });
 };
 
@@ -29,9 +30,17 @@ exports.signup = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email: email }).select('+password');
-    if (!user || !(await user.comparePassword(password, user.password)))
-        return res.status(401).json({ status: "error", message: "Wrong email or password" });
+    const { email, password, isTeacher } = req.body;
+    let user;
+    if (isTeacher) {
+        user = await User.findOne({ email: email }).select('+password');
+        if (!user || !(await user.comparePassword(password, user.password)))
+            return res.status(401).json({ status: "error", message: "Wrong email or password" });
+    } else {
+        user = await Student.findOne({ fullNameC: email }).select('+password');
+        if (!user || password !== user.pw)
+            return res.status(401).json({ status: "error", message: "Wrong email or password" });
+    }
     createSendToken(user, 200, res);
+
 }

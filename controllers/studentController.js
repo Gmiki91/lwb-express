@@ -40,11 +40,10 @@ exports.getMany = async (req, res) => {
 }
 
 exports.getChildren = async (req, res) => {
-    const { childrenIds } = req.body.user.toObject();
-    const students = await Student.find({ _id: { $in: childrenIds } })
+    const { user } = req.body
     res.status(200).json({
         status: 'success',
-        students
+        user
     })
 }
 
