@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Topic = mongoose.Schema({
-    date: Number,
     lesson: Number,
     text: String,
     grade: Number,

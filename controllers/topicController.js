@@ -9,11 +9,10 @@ exports.getMany = async (req, res) => {
 
 
 exports.add = async (req, res) => {
-    const { subject, grade, date, lesson, text } = req.body;
+    const { subject, grade, lesson, text } = req.body;
     await Topic.create({
         subject,
         grade,
-        date,
         lesson,
         text
 
@@ -27,7 +26,6 @@ exports.update = async (req, res) => {
     await Topic.findByIdAndUpdate(topic._id, {
         subject: topic.subject,
         grade: topic.grade,
-        date: topic.date,
         lesson: topic.lesson,
         text: topic.text
     })
