@@ -147,7 +147,16 @@ const addMarkAndResult = (id, studentMarks, result) => {
     });
     return result;
 }
-
+exports.deleteResult = async (req, res) => {
+    const { studentId, result, grade, subject } = req.body;
+    const student = await Student.findById(studentId);
+    let gradeBook = student.gradeBook.find(book => book.subject === subject && grade == book.grade);
+    gradeBook.results = gradeBook.results.filter(resultObj => !ObjectId(result._id).equals(resultObj._id));
+    await student.save();
+    res.status(201).json({
+        status: 'success',
+    })
+}
 exports.updateResult = async (req, res) => {
     const { studentId, result, grade, subject, user } = req.body;
     result.updatedBy = user.email;

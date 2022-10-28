@@ -21,8 +21,8 @@ router.route('/food')
 router.route('/results')
     .post(authCheck, teacherCheck,studentController.getResults)
     .put(authCheck, teacherCheck, studentController.giveResult)
-    .patch(authCheck, teacherCheck, studentController.updateResult);
-
+    .patch(authCheck, teacherCheck, studentController.updateResult)
+    // .delete(studentController.deleteResult);
 
 
 module.exports = router;
