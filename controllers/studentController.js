@@ -1,20 +1,20 @@
 const Student = require('../models/student');
 const ObjectId = require('mongodb').ObjectId;
 exports.register = async (req, res) => {
-    const { fullNameC, fullNameL, phone,pgName, email, dob,address, currentGrade,homeGoing, healthIssues, vegetarian, ukraineSchool, registeredAt, archived, user } = req.body;
+    const { fullNameC, fullNameL, phone, pgName, email, dob, address, currentGrade, homeGoing, healthIssues, vegetarian, ukraineSchool, registeredAt, archived, user } = req.body;
     const student = await Student.create({
         _id: new ObjectId(),
         fullNameC: fullNameC,
         fullNameL: fullNameL,
-        pgName:pgName,
+        pgName: pgName,
         phone: phone,
         email: email,
         dob: dob,
-        address:address,
+        address: address,
         currentGrade: currentGrade,
         healthIssues: healthIssues,
         vegetarian: vegetarian,
-        homeGoing:homeGoing,
+        homeGoing: homeGoing,
         ukraineSchool: ukraineSchool,
         registeredAt: registeredAt,
         gradeBook: initGradeBooks(currentGrade),
@@ -111,9 +111,10 @@ exports.getResults = async (req, res) => {
                 _id: student._id,
                 fullNameC: student.fullNameC,
                 fullNameL: student.fullNameL,
-                results: student.gradeBook.find(book => book.subject === req.body.subject)?.results
+                results: student.gradeBook
+                    .find(book => book.subject === req.body.subject)?.results.filter(result => !result.deleted)
             }
-        })
+        });
     res.status(200).json({
         status: 'success',
         data: students
