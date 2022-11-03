@@ -1,7 +1,7 @@
 const Student = require('../models/student');
 const ObjectId = require('mongodb').ObjectId;
 exports.register = async (req, res) => {
-    const { fullNameC, fullNameL, phone, pgName, email, dob, address, currentGrade, homeGoing, healthIssues, vegetarian, ukraineSchool, registeredAt, archived, user } = req.body;
+    const { fullNameC, fullNameL, phone, pgName, email, dob, address, currentGrade, healthIssues, vegetarian, ukraineSchool, registeredAt, archived, user } = req.body;
     const student = await Student.create({
         _id: new ObjectId(),
         fullNameC: fullNameC,
@@ -14,7 +14,6 @@ exports.register = async (req, res) => {
         currentGrade: currentGrade,
         healthIssues: healthIssues,
         vegetarian: vegetarian,
-        homeGoing: homeGoing,
         ukraineSchool: ukraineSchool,
         registeredAt: registeredAt,
         gradeBook: initGradeBooks(currentGrade),
@@ -46,7 +45,22 @@ exports.getChildren = async (req, res) => {
         user
     })
 }
-
+exports.updateStudent = async (req, res) => {
+    const { student } = req.body;
+    await Student.updateOne({ _id: student._id }, {
+        pgName: student.pgName,
+        phone: student.phone,
+        email: student.email,
+        address: student.address,
+        currentGrade: student.currentGrade,
+        healthIssues: student.healthIssues,
+        vegetarian: student.vegetarian,
+        ukraineSchool: student.ukraineSchool,
+    })
+    res.status(200).json({
+        status: 'success'
+    })
+}
 exports.updateStudents = async (req, res) => {
     const { students } = req.body;
     const studentPresence = students.map(student => { return { id: student._id, presence: student.missedClassAt } });
